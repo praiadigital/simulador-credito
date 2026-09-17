@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Amortização — Praia Digital</title>
+<meta name="description" content="Quanto tempo e juros você economiza amortizando o financiamento? Compare prazo vs parcela.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
+  body{background:#f0f9ff;color:#0f172a;min-height:100vh}
+  header{background:linear-gradient(135deg,#0077B6,#00B4D8);color:#fff;padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
+  header a{color:#fff;text-decoration:none;font-weight:700}.logo{font-size:1.2rem}
+  main{max-width:700px;margin:2rem auto;padding:0 1rem}
+  .card{background:#fff;border-radius:16px;padding:1.75rem;box-shadow:0 4px 24px rgba(0,60,100,.08)}
+  h1{font-size:1.5rem;color:#0077B6}.sub{color:#64748b;margin:.3rem 0 1.2rem;font-size:.95rem}
+  label{display:block;font-weight:600;font-size:.85rem;margin:.9rem 0 .3rem}
+  input{width:100%;padding:.7rem;border:1px solid #cbd5e1;border-radius:10px;font-size:1rem}
+  button{width:100%;margin-top:1.3rem;padding:.9rem;border:0;border-radius:12px;background:#0077B6;color:#fff;font-weight:800;font-size:1rem;cursor:pointer}
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.3rem}
+  @media(max-width:600px){.vs{grid-template-columns:1fr}}
+  .col{border-radius:14px;padding:1.1rem}
+  .a{background:#eff6ff;border:1px solid #93c5fd}.b{background:#f0fdf4;border:1px solid #86efac}
+  .col h3{font-size:.95rem;margin-bottom:.5rem}
+  .linha{display:flex;justify-content:space-between;font-size:.88rem;padding:.3rem 0}
+  .win{background:#dcfce7;border:1px solid #22c55e;border-radius:12px;padding:1rem;margin-top:1rem;display:none;font-size:.95rem}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="https://praia.digital/">🏖️ Praia Digital</a>
+  <a href="https://praia.digital/simulador-credito">← Simulador de Crédito</a>
+</header>
+<main>
+  <div class="card">
+    <h1>⚡ Simulador de Amortização</h1>
+    <p class="sub">Usou o FGTS ou recebeu um bônus? Veja o impacto de amortizar: reduzir <b>prazo</b> ou <b>parcela</b>.</p>
+    <label>Saldo devedor (R$)</label><input type="number" id="saldo" value="350000">
+    <label>Parcela atual (R$)</label><input type="number" id="parcela" value="3200">
+    <label>Valor para amortizar (R$)</label><input type="number" id="amort" value="50000" step="5000">
+    <label>Meses restantes</label><input type="number" id="meses" value="300">
+    <button onclick="calc()">Comparar estratégias</button>
+    <div class="vs" id="vs" style="display:none">
+      <div class="col a"><h3>📉 Reduzir parcela</h3>
+        <div class="linha"><span>Nova parcela</span><b id="np"></b></div>
+        <div class="linha"><span>Prazo</span><b id="npz"></b></div>
+        <div class="linha"><span>Juros economizados</span><b id="je1"></b></div>
+      </div>
+      <div class="col b"><h3>⏱️ Reduzir prazo</h3>
+        <div class="linha"><span>Parcela (mantida)</span><b id="np2"></b></div>
+        <div class="linha"><span>Novo prazo</span><b id="npz2"></b></div>
+        <div class="linha"><span>Juros economizados</span><b id="je2"></b></div>
+      </div>
+    </div>
+    <div class="win" id="win"></div>
+  </div>
+</main>
+<script>
+var fmt=function(n){return n.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0})};
+function calc(){
+  var S=parseFloat(document.getElementById('saldo').value)||0;
+  var p=parseFloat(document.getElementById('parcela').value)||1;
+  var A=parseFloat(document.getElementById('amort').value)||0;
+  var n=parseFloat(document.getElementById('meses').value)||1;
+  var i=0.105/12;
+  var S2=S-A;
+  // reduzir parcela: mesmo prazo
+  var np=S2*i/(1-Math.pow(1+i,-n));
+  var tot0=p*n, tot1=np*n;
+  // reduzir prazo: mesma parcela -> novo n
+  var n2=Math.log(p/(p-S2*i))/Math.log(1+i);
+  if(!isFinite(n2)||n2<0)n2=n;
+  var tot2=p*n2;
+  document.getElementById('vs').style.display='grid';
+  document.getElementById('np').textContent=fmt(np);
+  document.getElementById('npz').textContent=n+' meses';
+  document.getElementById('je1').textContent=fmt(Math.max(0,tot0-tot1));
+  document.getElementById('np2').textContent=fmt(p);
+  document.getElementById('npz2').textContent=Math.round(n2)+' meses (-'+(n-Math.round(n2))+')';
+  document.getElementById('je2').textContent=fmt(Math.max(0,tot0-tot2));
+  document.getElementById('win').style.display='block';
+  document.getElementById('win').innerHTML='🏆 <b>Reduzir o prazo</b> economiza mais juros ('+fmt(Math.max(0,tot0-tot2))+'). Reduzir a parcela alivia o orçamento mensal. Verifique o FGTS no <a href="https://praia.digital/simulador-credito/elegibilidade/" style="color:#166534;font-weight:700">Verificador de Elegibilidade</a>.';
+}
+</script>
+</body>
+</html>
