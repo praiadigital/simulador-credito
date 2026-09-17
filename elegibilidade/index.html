@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verificador de Elegibilidade FGTS e Minha Casa Minha Vida — Praia Digital</title>
+<meta name="description" content="Descubra em segundos se você pode usar FGTS e qual faixa do Minha Casa Minha Vida se encaixa na sua renda.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
+  body{background:#f0f9ff;color:#0f172a;min-height:100vh}
+  header{background:linear-gradient(135deg,#0077B6,#00B4D8);color:#fff;padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
+  header a{color:#fff;text-decoration:none;font-weight:700}.logo{font-size:1.2rem}
+  main{max-width:680px;margin:2rem auto;padding:0 1rem}
+  .card{background:#fff;border-radius:16px;padding:1.75rem;box-shadow:0 4px 24px rgba(0,60,100,.08)}
+  h1{font-size:1.5rem;color:#0077B6}.sub{color:#64748b;margin:.3rem 0 1.2rem;font-size:.95rem}
+  label{display:block;font-weight:600;font-size:.85rem;margin:.9rem 0 .3rem}
+  input,select{width:100%;padding:.7rem;border:1px solid #cbd5e1;border-radius:10px;font-size:1rem}
+  button{width:100%;margin-top:1.3rem;padding:.9rem;border:0;border-radius:12px;background:#0077B6;color:#fff;font-weight:800;font-size:1rem;cursor:pointer}
+  #out{display:none;margin-top:1.3rem}
+  .faixa{border-radius:12px;padding:1rem;margin-top:.6rem;font-size:.95rem}
+  .ok{background:#dcfce7;border:1px solid #86efac}.no{background:#fee2e2;border:1px solid #fca5a5}.mid{background:#fef9c3;border:1px solid #fde047}
+  .dica{margin-top:1.2rem;background:#ecfeff;border:1px solid #67e8f9;border-radius:12px;padding:1rem;font-size:.9rem}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="https://praia.digital/">🏖️ Praia Digital</a>
+  <a href="https://praia.digital/simulador-credito">← Simulador de Crédito</a>
+</header>
+<main>
+  <div class="card">
+    <h1>✅ Verificador de Elegibilidade</h1>
+    <p class="sub">FGTS e Minha Casa Minha Vida em 30 segundos.</p>
+    <label>Renda familiar mensal (R$)</label>
+    <input type="number" id="renda" value="6000">
+    <label>Trabalha com carteira assinada há quanto tempo?</label>
+    <select id="tempo"><option value="nao">Não sou CLT</option><option value="menos">CLT há menos de 3 anos</option><option value="tres">CLT há 3+ anos (somatório)</option></select>
+    <label>Já tem imóvel registrado no seu nome?</label>
+    <select id="imovel"><option value="nao">Não</option><option value="sim">Sim</option></select>
+    <label>Valor do imóvel desejado (R$)</label>
+    <input type="number" id="valor" value="350000">
+    <button onclick="verificar()">Verificar elegibilidade</button>
+    <div id="out"></div>
+    <div class="dica">💡 Elegível? Simule as parcelas no <a href="https://praia.digital/simulador-credito" style="color:#0077B6;font-weight:700">Simulador de Crédito</a> e veja os custos totais na <a href="https://praia.digital/calculadora-custos" style="color:#0077B6;font-weight:700">Calculadora de Custos</a>.</div>
+  </div>
+</main>
+<script>
+var fmt=function(n){return n.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0})};
+function verificar(){
+  var r=parseFloat(document.getElementById('renda').value)||0;
+  var t=document.getElementById('tempo').value;
+  var im=document.getElementById('imovel').value;
+  var v=parseFloat(document.getElementById('valor').value)||0;
+  var h='';
+  // FGTS
+  if(t==='tres'&&im==='nao') h+='<div class="faixa ok">✅ <b>FGTS:</b> você pode usar o saldo como entrada ou para amortizar. Requisitos atendidos: 3+ anos CLT e sem imóvel no nome.</div>';
+  else if(t==='tres') h+='<div class="faixa mid">⚠️ <b>FGTS:</b> tempo de trabalho ok, mas ter imóvel registrado impede o uso na compra de outro imóvel residencial na mesma cidade.</div>';
+  else h+='<div class="faixa no">❌ <b>FGTS:</b> é necessário somar 3 anos de trabalho sob regime CLT (não consecutivos).</div>';
+  // MCMV faixas (valores de referência)
+  if(r<=2640) h+='<div class="faixa ok">🏠 <b>MCMV Faixa 1:</b> renda até R$ 2.640 — maiores subsídios e menores taxas.</div>';
+  else if(r<=4400) h+='<div class="faixa ok">🏠 <b>MCMV Faixa 2:</b> renda até R$ 4.400 — subsídio parcial disponível.</div>';
+  else if(r<=8000) h+='<div class="faixa ok">🏠 <b>MCMV Faixa 3:</b> renda até R$ 8.000 — taxas reduzidas, sem subsídio direto.</div>';
+  else h+='<div class="faixa mid">🏦 <b>SBPE:</b> renda acima das faixas MCMV — financiamento pelo SBPE com taxas de mercado.</div>';
+  // comprometimento
+  var parc=r*0.3;
+  h+='<div class="faixa mid">📊 Parcela máxima recomendada (30% da renda): <b>'+fmt(parc)+'</b>. Para o imóvel de '+fmt(v)+', a entrada mínima típica é 20% ('+fmt(v*0.2)+').</div>';
+  document.getElementById('out').innerHTML=h;
+  document.getElementById('out').style.display='block';
+}
+</script>
+</body>
+</html>
