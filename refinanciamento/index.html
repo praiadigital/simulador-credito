@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refinanciamento Imobiliário — Praia Digital</title>
+<meta name="description" content="Seu imóvel quitado pode gerar crédito barato: simule o refinanciamento para reformar, investir ou quitar dívidas.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
+  body{background:#f0f9ff;color:#0f172a;min-height:100vh}
+  header{background:linear-gradient(135deg,#0077B6,#00B4D8);color:#fff;padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
+  header a{color:#fff;text-decoration:none;font-weight:700}.logo{font-size:1.2rem}
+  main{max-width:680px;margin:2rem auto;padding:0 1rem}
+  .card{background:#fff;border-radius:16px;padding:1.75rem;box-shadow:0 4px 24px rgba(0,60,100,.08)}
+  h1{font-size:1.5rem;color:#0077B6}.sub{color:#64748b;margin:.3rem 0 1.2rem;font-size:.95rem}
+  label{display:block;font-weight:600;font-size:.85rem;margin:.9rem 0 .3rem}
+  input,select{width:100%;padding:.7rem;border:1px solid #cbd5e1;border-radius:10px;font-size:1rem}
+  button{width:100%;margin-top:1.3rem;padding:.9rem;border:0;border-radius:12px;background:#0077B6;color:#fff;font-weight:800;font-size:1rem;cursor:pointer}
+  #out{display:none;margin-top:1.3rem}
+  .linha{display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid #e2e8f0;font-size:.93rem}
+  .destaque{background:#ecfeff;border:1px solid #67e8f9;border-radius:12px;padding:1.1rem;margin-top:.8rem;text-align:center}
+  .destaque b{font-size:1.5rem;color:#0369a1;display:block}
+  .dica{margin-top:1rem;background:#fef9c3;border:1px solid #fde047;border-radius:12px;padding:1rem;font-size:.85rem}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="https://praia.digital/">🏖️ Praia Digital</a>
+  <a href="https://praia.digital/simulador-credito">← Simulador de Crédito</a>
+</header>
+<main>
+  <div class="card">
+    <h1>🏠💰 Refinanciamento Imobiliário</h1>
+    <p class="sub">Imóvel quitado ou quase? Ele é sua garantia para o crédito mais barato do mercado (1–1,5%/mês vs 4%+ do cartão).</p>
+    <label>Valor de mercado do imóvel (R$)</label><input type="number" id="valor" value="500000">
+    <label>Quanto você precisa (R$)</label><input type="number" id="precisa" value="150000">
+    <label>Prazo desejado</label>
+    <select id="prazo"><option value="60">5 anos</option><option value="120" selected>10 anos</option><option value="180">15 anos</option></select>
+    <button onclick="calc()">Simular refinanciamento</button>
+    <div id="out"></div>
+    <div class="dica">⚠️ Limite típico: 50–60% do valor do imóvel. O imóvel fica alienado ao banco até quitar. Para reformar, veja o <a href="https://praia.digital/simulador-roi/simulador-reforma/" style="color:#854d0e;font-weight:700">Simulador de Reforma</a>.</div>
+  </div>
+</main>
+<script>
+var fmt=function(n){return n.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0})};
+function calc(){
+  var v=parseFloat(document.getElementById('valor').value)||0;
+  var p=parseFloat(document.getElementById('precisa').value)||0;
+  var n=parseFloat(document.getElementById('prazo').value);
+  var i=0.011; // ~1.1%/mês típico refi
+  var parc=p*i/(1-Math.pow(1+i,-n));
+  var limite=v*0.55;
+  var ok=p<=limite;
+  document.getElementById('out').innerHTML=
+    '<div class="linha"><span>Limite do seu imóvel (55%)</span><b>'+fmt(limite)+'</b></div>'+
+    '<div class="linha"><span>Valor solicitado</span><b>'+fmt(p)+' '+(ok?'✅':'❌ acima do limite')+'</b></div>'+
+    (ok?'<div class="destaque">Parcela estimada (a ~1,1%/mês)<b>'+fmt(parc)+'/mês</b><small>Compare com crédito pessoal (4%/mês): mesmo valor sairia '+fmt(p*0.04/(1-Math.pow(1.04,-n)))+'/mês</small></div>'
+       :'<div class="destaque" style="background:#fee2e2;border-color:#fca5a5"><b style="color:#b91c1c">Valor acima do limite</b><small>Reduza para até '+fmt(limite)+' ou quite mais do imóvel antes.</small></div>');
+  document.getElementById('out').style.display='block';
+}
+</script>
+</body>
+</html>
