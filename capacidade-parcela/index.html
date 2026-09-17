@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quanto Posso Comprometer da Renda? — Praia Digital</title>
+<meta name="description" content="Descubra a parcela segura de financiamento para o seu perfil financeiro.">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
+  body{background:#f0f9ff;color:#0f172a;min-height:100vh}
+  header{background:linear-gradient(135deg,#0077B6,#00B4D8);color:#fff;padding:1rem 1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
+  header a{color:#fff;text-decoration:none;font-weight:700}.logo{font-size:1.2rem}
+  main{max-width:660px;margin:2rem auto;padding:0 1rem}
+  .card{background:#fff;border-radius:16px;padding:1.75rem;box-shadow:0 4px 24px rgba(0,60,100,.08)}
+  h1{font-size:1.5rem;color:#0077B6}.sub{color:#64748b;margin:.3rem 0 1.2rem;font-size:.95rem}
+  label{display:block;font-weight:600;font-size:.85rem;margin:.9rem 0 .3rem}
+  input{width:100%;padding:.7rem;border:1px solid #cbd5e1;border-radius:10px;font-size:1rem}
+  button{width:100%;margin-top:1.3rem;padding:.9rem;border:0;border-radius:12px;background:#0077B6;color:#fff;font-weight:800;font-size:1rem;cursor:pointer}
+  #out{display:none;margin-top:1.3rem}
+  .nivel{border-radius:12px;padding:1rem;margin-top:.7rem;font-size:.95rem}
+  .seg{background:#dcfce7;border:1px solid #86efac}
+  .aten{background:#fef9c3;border:1px solid #fde047}
+  .risco{background:#fee2e2;border:1px solid #fca5a5}
+  .big{font-size:1.6rem;font-weight:800;color:#0369a1}
+  .dica{margin-top:1.2rem;background:#ecfeff;border:1px solid #67e8f9;border-radius:12px;padding:1rem;font-size:.9rem}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="https://praia.digital/">🏖️ Praia Digital</a>
+  <a href="https://praia.digital/simulador-credito">← Simulador de Crédito</a>
+</header>
+<main>
+  <div class="card">
+    <h1>💳 Capacidade de Parcela</h1>
+    <p class="sub">A regra dos 30% não vale para todo mundo. Descubra seu limite real.</p>
+    <label>Renda mensal líquida (R$)</label><input type="number" id="renda" value="8000">
+    <label>Outras dívidas mensais — carro, cartão, empréstimos (R$)</label><input type="number" id="dividas" value="800">
+    <label>Reserva de emergência (meses de gastos)</label><input type="number" id="reserva" value="4">
+    <button onclick="calc()">Calcular limite seguro</button>
+    <div id="out"></div>
+    <div class="dica">🏦 Com o limite em mãos, simule o financiamento no <a href="https://praia.digital/simulador-credito" style="color:#0077B6;font-weight:700">Simulador de Crédito</a> e a entrada na <a href="https://praia.digital/calculadora-custos/entrada-ideal/" style="color:#0077B6;font-weight:700">Entrada Ideal</a>.</div>
+  </div>
+</main>
+<script>
+var fmt=function(n){return n.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0})};
+function calc(){
+  var r=parseFloat(document.getElementById('renda').value)||0;
+  var d=parseFloat(document.getElementById('dividas').value)||0;
+  var res=parseFloat(document.getElementById('reserva').value)||0;
+  var pctMax=res>=6?0.30:res>=3?0.25:0.20;
+  var limite=Math.max(0, r*pctMax - d);
+  var banco=r*0.30; // bancos permitem ate 30% bruto
+  var nivel, cls;
+  if(d/r>0.2){nivel='🔴 <b>Atenção:</b> suas dívidas já consomem '+Math.round(d/r*100)+'% da renda. Quite dívidas caras antes de financiar.';cls='risco';}
+  else if(res<3){nivel='🟡 <b>Construa reserva primeiro:</b> com menos de 3 meses de reserva, comprometa no máximo 20% da renda.';cls='aten';}
+  else{nivel='🟢 <b>Perfil saudável:</b> sua estrutura financeira suporta um financiamento com segurança.';cls='seg';}
+  document.getElementById('out').innerHTML=
+    '<div class="nivel '+cls+'">'+nivel+'</div>'+
+    '<div class="nivel seg" style="text-align:center">Parcela segura recomendada<br><span class="big">'+fmt(limite)+'/mês</span><br><small>Limite bancário (30%): '+fmt(banco)+' · suas dívidas: '+fmt(d)+'</small></div>';
+  document.getElementById('out').style.display='block';
+}
+</script>
+</body>
+</html>
